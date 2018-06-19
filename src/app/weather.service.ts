@@ -1,4 +1,6 @@
 import { ISummary } from './models/summary';
+import{ITemperature} from './models/temperature';
+import{Itpw} from './models/tpw';
 import { IDayTile } from './models/dayTile';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
@@ -9,6 +11,8 @@ import * as moment from 'moment';
 @Injectable()
 export class WeatherService {
   summary: ISummary;
+  temperature:ITemperature;
+  tpw:Itpw;
   dayWiseMap: any;
   dayTileList: Array<IDayTile>;
   constructor(private httpService: Http) {
@@ -39,9 +43,20 @@ export class WeatherService {
           day: moment(data.list[0].dt * 1000).format("dddd"),
           weatherCondition: data.list[0].weather[0].description
         };
+        this.temperature={
+          currentWeatherImageURL:'assets/images/cloudy.png',
+          temperatureInKelvin: data.list[0].main.temp,
+          temperatureInCelcius: Math.round(data.list[0].main.temp-273.15),
+          temperatureInFahrenheit: 9/5*(data.list[0].main.temp)+32
+        };
+        this.tpw={
+          temparature:data.list[0].main.temp-270,
+          pressure:data.list[0].main.pressure,
+          windSpeed:data.list[0].wind.speed 
+        };
+        
         // Build day wise map
         data.list.forEach(date => {
-          // console.log(date);
           const dateValue = new Date(date.dt * 1000);
           const dayNum = dateValue.getDay();
           if (dayNum in this.dayWiseMap) {
@@ -59,19 +74,23 @@ export class WeatherService {
           return diff < 0 ? diff + 7 : diff;
         });
 
-        console.log(sortedMap);
+        console.log("sortedMap"+sortedMap);
 
         this.dayTileList = _.map(sortedMap, (obj) => {
+          console.log("obj "+obj);
           const minTemp = _.reduce(obj.map(interval => interval.main.temp_min), (a, b) => a + b) / obj.length;
+          const icon = obj[0].weather[0].icon;
+          const iconId = 'http://openweathermap.org/img/w/'+icon+'.png'; 
+          console.log("icon"+iconId);
           return {
             day: moment(obj[0].dt * 1000).format("ddd"),
             minTemp: _.round(minTemp - 270, 2),
             maxTemp: _.round(obj[0].main.temp_max - 270, 2),
-            imageURL: 'assets/images/cloudy.png',
+            imageURL: iconId,
             dayNum: new Date(obj[0].dt * 1000).getDay()
           }
         });
-        console.log(this.dayTileList);
+        console.log("dayTileList"+this.dayTileList);
       });
     // Build data structure for the tiles
   }

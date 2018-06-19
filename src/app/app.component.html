@@ -13,8 +13,8 @@
 </div>
 <div class="main-container" id="main-con">
   <app-summary [summaryInfo]="weatherService.summary"></app-summary>
-  <app-temperature></app-temperature>
-  <app-tpw></app-tpw>
+  <app-temperature [tempInfo]="weatherService.temperature"></app-temperature>
+  <app-tpw [tpwInfo]="weatherService.tpw"></app-tpw>
   <app-chart></app-chart>
   <div class="forecast">
     <div class="col-xs-12" id="fore1">
