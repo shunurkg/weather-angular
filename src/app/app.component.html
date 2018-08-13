@@ -11,11 +11,12 @@
     </span>
   </div>
 </div>
-<div class="main-container" id="main-con">
+<div class="main-container" id="main-con" *ngIf="weatherService.summary">
   <app-summary [summaryInfo]="weatherService.summary"></app-summary>
+  <!-- weatherService is the instance with which v r trying to bind the vlaues in that particular component and trying to call each components template(see fetchweatherinfo mtd ...this.summary  n all ) from weatherservice.ts -->
   <app-temperature [tempInfo]="weatherService.temperature"></app-temperature>
   <app-tpw [tpwInfo]="weatherService.tpw"></app-tpw>
-  <app-chart></app-chart>
+  <app-chart [chartData]="weatherService.chartdetails"></app-chart>
   <div class="forecast">
     <div class="col-xs-12" id="fore1">
       <div class="row">

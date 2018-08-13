@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Injectable()
 export class WeatherService {
@@ -15,8 +16,11 @@ export class WeatherService {
   tpw:Itpw;
   dayWiseMap: any;
   dayTileList: Array<IDayTile>;
+  chartdetails: Array<any>;
   constructor(private httpService: Http) {
     this.dayWiseMap = {};
+    this.chartdetails=[];
+  
   }
 
   updateDayInfoFor(dayNum: number) {
@@ -27,9 +31,24 @@ export class WeatherService {
     console.log(dayInfoForDay);
     this.summary = {
       ...this.summary,
+      // we are adding ... to append data to the existing one and in this summary v want that Place(say pune) to get displayed always so v add ...
       day: moment(dayInfoForDay[0].dt * 1000).format("dddd"),
       weatherCondition: dayInfoForDay[0].weather[0].description
     }
+    this.temperature = {
+      
+      currentWeatherImageURL:"https://openweathermap.org/img/w/"+dayInfoForDay[0].weather[0].icon+".png",
+      temperatureInCelcius: Math.round(dayInfoForDay[0].main.temp - 270),
+      temperatureInKelvin:Math.round(dayInfoForDay[0].temp- 270),
+      temperatureInFahrenheit:Math.round((dayInfoForDay[0].temp - 270)*1.8+32)
+    }
+    this.tpw={
+  
+      temparature:Math.round(dayInfoForDay[0].main.temp - 270),
+      pressure: Math.round(dayInfoForDay[0].main.pressure/10),
+      windSpeed:Math.round(dayInfoForDay[0].wind.speed*2.23694)
+     };
+    
   }
 
   fetchWeatherInfo(cityName: string) {
@@ -44,7 +63,7 @@ export class WeatherService {
           weatherCondition: data.list[0].weather[0].description
         };
         this.temperature={
-          currentWeatherImageURL:'assets/images/cloudy.png',
+          currentWeatherImageURL: "https://openweathermap.org/img/w/"+data.list[0].weather[0].icon+".png",
           temperatureInKelvin: data.list[0].main.temp,
           temperatureInCelcius: Math.round(data.list[0].main.temp-273.15),
           temperatureInFahrenheit: 9/5*(data.list[0].main.temp)+32
@@ -91,6 +110,15 @@ export class WeatherService {
           }
         });
         console.log("dayTileList"+this.dayTileList);
+        const currentDayDetails = this.dayWiseMap[new Date().getDay()];
+        console.log(currentDayDetails);
+        this.chartdetails = currentDayDetails
+        .map(tempInfoObj => {
+          return [moment(tempInfoObj.dt * 1000).format('dddd, h:mm a'), tempInfoObj.main.temp]
+        })
+        console.log("chardata",this.chartdetails);
+     
+      
       });
     // Build data structure for the tiles
   }

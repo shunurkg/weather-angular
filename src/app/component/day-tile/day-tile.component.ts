@@ -14,6 +14,7 @@ export class DayTileComponent implements OnInit {
 
   ngOnInit() {
   }
+  
 
   onTileClick() {
     this.weatherService.updateDayInfoFor(this.dayTileInfo.dayNum);

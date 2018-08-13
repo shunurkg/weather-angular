@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input, OnChanges  } from '@angular/core';
 
 @Component({
   selector: 'app-chart',
@@ -7,16 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChartComponent implements OnInit {
 
-  options: any;
-  constructor() { }
-
+  @Input() chartData;
+  pieChartData: any;
   ngOnInit() {
-    this.options = {
-      title: { text: 'simple chart' },
-      series: [{
-        data: [29.9, 71.5, 106.4, 129.2],
-      }]
-    };
+    this.pieChartData = {
+      chartType: 'LineChart',
+      dataTable: [['Time', 'Temperature'],...this.chartData]
+    }
+    console.log("hii");
   }
 
 }

@@ -12,4 +12,5 @@ export class TemperatureComponent implements OnInit {
   ngOnInit() {
   }
 
+  
 }
